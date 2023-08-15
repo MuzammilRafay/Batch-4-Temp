@@ -16,7 +16,7 @@ function LocationContextProvider(props) {
 
       setTimeout(() => {
         setKeyword(searchKeyword);
-      }, 1000);
+      }, 500);
     }
   };
 

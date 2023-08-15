@@ -21,7 +21,7 @@ function MapSearch({ isFavoriteToggled = false }) {
         placeholder="Search for a location"
         onChangeText={onChangeSearch}
         value={searchQuery}
-        icon={isFavoriteToggled ? "heart" : "heart-outline"}
+        icon="map"
         onSubmitEditing={() => {
           search(searchQuery);
         }}
