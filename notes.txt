@@ -109,3 +109,7 @@ npx expo install react-native-maps
   npx expo install @react-native-async-storage/async-storage
 
   https://react-native-async-storage.github.io/async-storage/docs/usage/
+
+
+
+https://github.com/mobinni/MealsToGo/tree/57-authentication-service-context
