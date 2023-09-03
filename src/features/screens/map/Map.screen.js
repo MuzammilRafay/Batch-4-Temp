@@ -5,12 +5,14 @@ import styled from "styled-components/native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { LocationContext } from "../../../services/locations/location.context";
 import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
-import MapCalloutComponent from "./MapCallout.component";
+import { ActivityIndicator } from "react-native";
+import MapCalloutComponent from "./MapCalloutComponent";
 
 function MapScreen({ navigation }) {
+  const { location, isLoading: locationLoader } = useContext(LocationContext);
+  const { isLoading: restaurantLoader, restaurants = [] } =
+    useContext(RestaurantsContext);
   const [latDelta, setLatDelta] = useState(0);
-  const { location } = useContext(LocationContext);
-  const { restaurants = [] } = useContext(RestaurantsContext);
 
   const { lat, lng, viewport } = location;
 
@@ -19,13 +21,15 @@ function MapScreen({ navigation }) {
     const southwestLat = viewport.southwest.lat;
 
     setLatDelta(northeastLat - southwestLat);
-  }, [location, viewport]);
-
-  console.log(restaurants[0], "restaurants");
-
+  }, [viewport, location]);
+  const someLoaderAvailable = restaurantLoader || locationLoader;
   return (
     <SafeAreaView>
       <MapSearch />
+
+      {someLoaderAvailable && (
+        <ActivityIndicator size={50} animating={true} color="#0000ff" />
+      )}
 
       <MapView
         style={{
@@ -39,24 +43,24 @@ function MapScreen({ navigation }) {
           longitudeDelta: 0.02,
         }}
       >
-        {restaurants.map((restaurant) => {
+        {restaurants.map((singleRestaurant) => {
           return (
             <Marker
-              key={restaurant.name}
-              title={restaurant.name}
+              key={singleRestaurant.name}
+              title={singleRestaurant.name}
               coordinate={{
-                latitude: restaurant.geometry.location.lat,
-                longitude: restaurant.geometry.location.lng,
+                latitude: singleRestaurant.geometry.location.lat,
+                longitude: singleRestaurant.geometry.location.lng,
               }}
             >
               <Callout
                 onPress={() => {
                   navigation.navigate("RestaurantDetail", {
-                    singleRestaurant: restaurant?.item,
+                    singleRestaurant: singleRestaurant,
                   });
                 }}
               >
-                <MapCalloutComponent restaurant={restaurant} />
+                <MapCalloutComponent singleRestaurant={singleRestaurant} />
               </Callout>
             </Marker>
           );

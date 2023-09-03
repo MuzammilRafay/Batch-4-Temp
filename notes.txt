@@ -86,3 +86,26 @@ yarn add @react-navigation/stack react-native-gesture-handler
 
 
 npx expo install react-native-maps
+
+
+// console.log(location, "location");
+
+  /*
+   longitudeDelta
+   latitudeDelta
+    
+
+
+   it will calculate the horizantal and vertical zoom 
+  */
+
+
+  react-native-webview
+
+
+  https://docs.expo.dev/versions/latest/sdk/async-storage/
+
+
+  npx expo install @react-native-async-storage/async-storage
+
+  https://react-native-async-storage.github.io/async-storage/docs/usage/

@@ -34,7 +34,7 @@ export const RestaurantProvider = (props) => {
           setError(err);
           setIsLoading(false);
         });
-    }, 1000);
+    }, 500);
   };
 
   return (

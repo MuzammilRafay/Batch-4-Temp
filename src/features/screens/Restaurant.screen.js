@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Search from "../components/search.component";
 import CustomRestuarantCard from "../components/CustomRestuarantCard/CustomRestuarantCard";
 // import { ScrollView } from "react-native";
@@ -7,6 +7,8 @@ import { View, FlatList, TouchableOpacity, Platform } from "react-native";
 import { ActivityIndicator } from "react-native";
 import { RestaurantsContext } from "../../services/restaurants/restaurants.context";
 import { LocationContext } from "../../services/locations/location.context";
+import FavoriteBar from "../components/FavoriteBar/FavoriteBar";
+import { FavoriteContext } from "../../services/favorites/favorites.context";
 
 const RestaurantListContainer = styled(View)`
   flex: 1;
@@ -29,6 +31,8 @@ function RestaurantScreen(props) {
 
   const { isLoading, restaurants } = useContext(RestaurantsContext);
   const { isLoading: locationLoader } = useContext(LocationContext);
+  const [isToggled, setIsToggled] = useState(false);
+  const { favorites } = useContext(FavoriteContext);
 
   // console.log(props, "props");
 
@@ -37,7 +41,12 @@ function RestaurantScreen(props) {
   const someLoaderAvailable = isLoading || locationLoader;
   return (
     <>
-      <Search />
+      <Search
+        onFavoriteToggled={() => setIsToggled(!isToggled)}
+        isFavoriteToggled={isToggled}
+      />
+
+      {isToggled && <FavoriteBar favorites={favorites} />}
 
       {someLoaderAvailable && (
         <Loading size={50} animating={true} color="#0000ff" />

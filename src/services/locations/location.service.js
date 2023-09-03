@@ -22,9 +22,9 @@ const locationTransform = (data) => {
   const { geometry } = formattedResponse[0];
 
   return {
-    viewport: geometry.viewport,
     lat: geometry.location.lat,
     lng: geometry.location.lng,
+    viewport: geometry.viewport,
   };
 };
 

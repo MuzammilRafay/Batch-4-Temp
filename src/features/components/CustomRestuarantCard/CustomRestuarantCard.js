@@ -6,15 +6,24 @@ import CustomText from "../typography/text.component";
 import { SvgXml } from "react-native-svg";
 import star from "../../../../assets/star";
 import open from "../../../../assets/open";
+import FavoriteButton from "../FavoriteButton/FavoriteButton";
 
 const RestaurantCard = styled(Card)`
   background-color: ${(props) => props.theme.colors.bg.primary};
   margin-bottom: 25px;
+  position: relative;
 `;
 
 const RestaurantCardCover = styled(Card.Cover)`
   margin-bottom: 10px;
   padding: 12px;
+`;
+
+const RestaurantCardCoverForFavoriteBar = styled(Card.Cover)`
+  width: 100%;
+  min-width: 200px;
+  height: 100px;
+  padding: 6px;
 `;
 
 const Title = styled(CustomText)``;
@@ -51,7 +60,7 @@ const CustomImage = styled(Image)`
 `;
 
 function CustomRestuarantCard(props) {
-  const { restaurant = {} } = props;
+  const { restaurant = {}, usingIsFavoriteBar = false } = props;
 
   const {
     photos = [
@@ -68,28 +77,36 @@ function CustomRestuarantCard(props) {
   const ratingArray = Array.from(new Array(Math.floor(rating)));
   return (
     <RestaurantCard>
-      <RestaurantCardCover source={{ uri: photos[0] }} />
+      <FavoriteButton restaurant={restaurant} />
+      {usingIsFavoriteBar ? (
+        <RestaurantCardCoverForFavoriteBar source={{ uri: photos[0] }} />
+      ) : (
+        <RestaurantCardCover source={{ uri: photos[0] }} />
+      )}
+
       <CardSection>
-        <Title variant="label">{name}</Title>
+        <Title variant="label">{name} </Title>
 
-        <CardInnerSection>
-          <RatingContainer>
-            {ratingArray?.map((singleRating) => {
-              return <SvgXml xml={star} width={20} height={20} />;
-            })}
-          </RatingContainer>
+        {!usingIsFavoriteBar && (
+          <CardInnerSection>
+            <RatingContainer>
+              {ratingArray?.map((singleRating) => {
+                return <SvgXml xml={star} width={20} height={20} />;
+              })}
+            </RatingContainer>
 
-          <RestaurantStatusContainer>
-            {isClosedTemporarily && (
-              <Title variant="caption" style={{ color: "red" }}>
-                CLOSED TEMPORARILY
-              </Title>
-            )}
-            {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
+            <RestaurantStatusContainer>
+              {isClosedTemporarily && (
+                <Title variant="caption" style={{ color: "red" }}>
+                  CLOSED TEMPORARILY
+                </Title>
+              )}
+              {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
 
-            {icon && <CustomImage source={{ uri: icon }} />}
-          </RestaurantStatusContainer>
-        </CardInnerSection>
+              {icon && <CustomImage source={{ uri: icon }} />}
+            </RestaurantStatusContainer>
+          </CardInnerSection>
+        )}
       </CardSection>
     </RestaurantCard>
   );

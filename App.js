@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+
 import { Text, SafeAreaView, StatusBar, View } from "react-native";
 import { ThemeProvider } from "styled-components";
 import styled from "styled-components/native";
@@ -18,6 +20,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { RestaurantNavigator } from "./src/navigation/restuarnts.navigator";
 import MapScreen from "./src/features/screens/map/Map.screen";
+import { FavoriteContextProvider } from "./src/services/favorites/favorites.context";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { AuthenticationContext } from "./src/services/authentication/authentication.context";
 
 const Tab = createBottomTabNavigator();
 const TAB_ICONS = {
@@ -58,7 +64,42 @@ function SettingsScreen() {
 //   );
 // }
 
+const firebaseConfig = {
+  apiKey: "AIzaSyC9Y2PrQLdTZnoQFMeBLypHTA4CXvV2JWM",
+  authDomain: "laravel-nuxtjs.firebaseapp.com",
+  databaseURL: "https://laravel-nuxtjs.firebaseio.com",
+  projectId: "laravel-nuxtjs",
+  storageBucket: "laravel-nuxtjs.appspot.com",
+  messagingSenderId: "485211033057",
+  appId: "1:485211033057:web:52f061411b5d615fbed6a0",
+};
+
+initializeApp(firebaseConfig);
+
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      // https://firebase.google.com/docs/auth/web/password-auth
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, "admin@gmail.com", "admin123")
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          // console.log(user, "user");
+
+          if (user) {
+            setIsAuthenticated(true);
+          }
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+    }, 2000);
+  }, []);
+
   let [oswaldLoaded] = useOswaldFont({
     Oswald_400Regular,
   });
@@ -81,30 +122,36 @@ export default function App() {
     margin-top: ${StatusBar.currentHeight}px;
   `;
 
+  if (!isAuthenticated) return null;
+
   return (
     <ThemeProvider theme={theme}>
-      <LocationContextProvider>
-        <RestaurantProvider>
-          <CustomSafeAreaView>
-            <NavigationContainer>
-              <Tab.Navigator
-                screenOptions={createScreenOptions}
-                tabBarOptions={{
-                  activeTintColor: "tomato",
-                  inactiveTintColor: "gray",
-                }}
-              >
-                <Tab.Screen
-                  name="Restaurants"
-                  component={RestaurantNavigator}
-                />
-                <Tab.Screen name="Map" component={MapScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
-              </Tab.Navigator>
-            </NavigationContainer>
-          </CustomSafeAreaView>
-        </RestaurantProvider>
-      </LocationContextProvider>
+      <AuthenticationContext>
+        <FavoriteContextProvider>
+          <LocationContextProvider>
+            <RestaurantProvider>
+              <CustomSafeAreaView>
+                <NavigationContainer>
+                  <Tab.Navigator
+                    screenOptions={createScreenOptions}
+                    tabBarOptions={{
+                      activeTintColor: "tomato",
+                      inactiveTintColor: "gray",
+                    }}
+                  >
+                    <Tab.Screen
+                      name="Restaurants"
+                      component={RestaurantNavigator}
+                    />
+                    <Tab.Screen name="Map" component={MapScreen} />
+                    <Tab.Screen name="Settings" component={SettingsScreen} />
+                  </Tab.Navigator>
+                </NavigationContainer>
+              </CustomSafeAreaView>
+            </RestaurantProvider>
+          </LocationContextProvider>
+        </FavoriteContextProvider>
+      </AuthenticationContext>
     </ThemeProvider>
   );
 }

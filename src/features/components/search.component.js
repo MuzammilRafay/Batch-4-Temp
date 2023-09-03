@@ -9,7 +9,7 @@ const SearchContainer = styled(View)`
   background-color: ${(props) => props.theme.colors.bg.primary};
 `;
 
-function Search({ isFavoriteToggled = false }) {
+function Search({ isFavoriteToggled = false, onFavoriteToggled }) {
   const [searchQuery, setSearchQuery] = useState("");
   const { search } = useContext(LocationContext);
 
@@ -22,6 +22,7 @@ function Search({ isFavoriteToggled = false }) {
         onChangeText={onChangeSearch}
         value={searchQuery}
         icon={isFavoriteToggled ? "heart" : "heart-outline"}
+        onIconPress={onFavoriteToggled}
         onSubmitEditing={() => {
           search(searchQuery);
         }}
